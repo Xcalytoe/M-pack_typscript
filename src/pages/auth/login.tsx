@@ -10,6 +10,11 @@ import './auth.scss';
 import Spinner from '../../components/Spinner';
 import ErrorToast from '../../components/ErrorToast';
 
+interface FormValues {
+	email: string;
+    loginPass: string;
+
+}
 export default function Login() {
 	const history = useHistory();
 	const {state, dispatch} = useContext(GlobalContext);
@@ -20,28 +25,30 @@ export default function Login() {
 		register,
 		handleSubmit,
 		formState: {errors},
-	} = useForm({
+	} = useForm<FormValues>({
 		resolver: yupResolver(loginSchema),
 		mode: 'all',
 	});
 	const [eyeToggle, setEyeToggle] = useState(true);
-	const [formState, setFormState] = useState({});
+	const [formState, setFormState] = useState<FormValues>({email:'', loginPass:''});
 
 	// Handle onChange
-	const onChange = e => {
+	const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const {name} = e.target;
 		const {value} = e.target;
 		setFormState({...formState, [name]: value});
 	};
 
-	const loginUserWithEmailAndPasswordHandler = async data => {
+	const loginUserWithEmailAndPasswordHandler = async (data:FormValues) => {
 		// E.preventDefault();
 		await signIn(data)(dispatch);
 		history.push('/dashboard');
 	};
 
-	const signInWithGoogle = async e => {
-		e.preventDefault();
+	// const signInWithGoogle = async  (e: React.ChangeEvent<HTMLInputElement>):Promise<void> => {
+	// 	e.preventDefault();
+	const signInWithGoogle = async  ():Promise<void> => {
+	
 		//    Call the auth action
 		await googleSign()(dispatch);
 		history.push('/dashboard');
@@ -75,12 +82,11 @@ export default function Login() {
 					<div className="form_grid">
 						<div className="form-group">
 							<div className="form-input">
+							{/* name="email" */}
+
 								<input
 									className={`
-                  ${errors?.email ? 'error' : ''} ${
-			formState?.email ? 'focused' : ''}
-                    `}
-									name="email"
+                  ${errors?.email ? 'error' : ''} ${formState?.email ? 'focused' : ''}`}
 									id="email"
 									{...register('email')}
 									onChange={onChange}
@@ -102,11 +108,11 @@ export default function Login() {
                   ${formState?.loginPass ? 'focused' : ''}
                   `}
 									type={eyeToggle ? 'password' : 'text'}
-									name="loginPass"
 									id="loginPass"
 									{...register('loginPass')}
 									onChange={onChange}
 								/>
+								{/* name="loginPass" */}
 								<label htmlFor="loginPass">Password</label>
 								<span
 									className="form-input__eye-con"
@@ -194,7 +200,7 @@ export default function Login() {
 						</button>
 					</div>
 					<div className="auth-container__google flex justify-center">
-						<button className="w-full " onClick={signInWithGoogle}>
+						<button className="w-full " type="button" onClick={signInWithGoogle}>
 							<svg
 								className="inline-block"
 								width="20"

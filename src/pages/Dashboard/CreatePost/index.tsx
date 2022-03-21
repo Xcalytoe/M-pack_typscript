@@ -10,9 +10,12 @@ import { convertToHTML } from "draft-convert";
 import DOMPurify from "dompurify";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
-type FormValues = {
-  resolver: any;
-  mode: string;
+interface FormValues {
+  postTitle: string;
+  description: string;
+  postBody: string;
+  postCategory: string;
+  postImage?: {} 
 };
 
 export default function index() {
@@ -31,7 +34,7 @@ export default function index() {
   const [editorState, setEditorState] = useState(() =>
     EditorState.createEmpty()
   );
-  const [convertedContent, setConvertedContent] = useState<>(null);
+  const [convertedContent, setConvertedContent] = useState(null);
   const handleEditorChange = (state) => {
     setEditorState(state);
     convertContentToHTML();

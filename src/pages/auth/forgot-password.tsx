@@ -11,25 +11,30 @@ import Spinner from '../../components/Spinner';
 import ErrorToast from '../../components/ErrorToast';
 import SuccessToast from '../../components/SuccessToast';
 
+
+interface FormValues {
+	email: string;
+
+}
 export default function ForgotPassword() {
 	const {state, dispatch} = useContext(GlobalContext);
 	const {passReset, passResetErr, loading, user} = state;
 	const errorMsg = passResetErr;
 	const successMsg = passReset;
-	const {register, handleSubmit, formState: {errors}} = useForm({
+	const {register, handleSubmit, formState: {errors}} = useForm<FormValues>({
 		resolver: yupResolver(forgotPassSchema),
 		mode: 'all',
 	});
-	const [formState, setFormState] = useState({});
+	const [formState, setFormState] = useState<FormValues>({email:''});
 
 	// Handle onChange
-	const onChange = e => {
+	const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const {name} = e.target;
 		const {value} = e.target;
 		setFormState({...formState, [name]: value});
 	};
 
-	const forgotPassword = async data => {
+	const forgotPassword = async (data:FormValues) => {
 		// E.preventDefault();
 		await resetPassword(data)(dispatch);
 	};
@@ -62,9 +67,7 @@ export default function ForgotPassword() {
 						<div className="form-group">
 							<div className="form-input">
 								<input
-									className={`${errors?.email ? 'error' : ''} 
-                  ${formState?.email ? 'focused' : ''}`}
-									name="email"
+									className={`${errors?.email ? 'error' : ''} ${formState?.email ? 'focused' : ''}`}
 									id="email"
 									{...register('email')}
 									onChange={onChange}
